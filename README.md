@@ -9,37 +9,14 @@ Execució intercalada entre els fils, amb pauses aleatòries.
 ### Comportament 2
 Execució predominant d'un fil abans que l'altre ("Pepe" abans que "Juan").
 
-#### Sortida esperada:
-```
-Termina thread main
-Pepe 1
-Pepe 2
-...
-Pepe 9
-Juan 1
-Juan 2
-...
-Juan 9
-Termina el fil Pepe
-Termina el fil Juan
-```
+![image](https://github.com/user-attachments/assets/e0c04e11-38d3-4b26-9571-52b914b1bf20)
+
 
 ### Comportament 3
 Execució estrictament alternada entre els fils, sincronitzada amb `wait()` i `notify()`.
 
-#### Sortida esperada:
-```
-Termina thread main
-Juan 1
-Pepe 1
-Juan 2
-Pepe 2
-...
-Juan 9
-Pepe 9
-Termina el fil Pepe
-Termina el fil Juan
-```
+![image](https://github.com/user-attachments/assets/f6d6c51b-05d5-484a-b322-d15779eb960f)
+
 
 ## Resultats obtinguts
 
