@@ -27,4 +27,3 @@ Execució estrictament alternada entre els fils, sincronitzada amb `wait()` i `n
 ## Notes addicionals
 - La sincronització del comportament 3 pot requerir diverses execucions per verificar-ne el funcionament correcte.
 - L'ordre d'execució en els comportaments 1 i 2 pot variar lleugerament segons la planificació del sistema operatiu.
-
