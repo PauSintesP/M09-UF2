@@ -9,18 +9,22 @@ public class Compte {
         this.saldo = 0;
     }
 
-    public static Compte getInstance() {
+    public static synchronized Compte getInstance() {
         if (instance == null) {
             instance = new Compte();
         }
         return instance;
     }
 
-    public float getSaldo() {
+    public synchronized float getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(float saldo) {
-        this.saldo = saldo;
+    public synchronized void ingressar(float quantitat) {
+        saldo += quantitat;
+    }
+
+    public synchronized void retirar(float quantitat) {
+        saldo -= quantitat;
     }
 }
