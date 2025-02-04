@@ -16,17 +16,17 @@ public class Esdeveniment {
 
     public synchronized void ferReserva(Assistent asistent) throws InterruptedException {
         while (asistents.size() >= aforament) {
-            wait();  // Espera si no hay plazas disponibles
+            wait();
         }
         asistents.add(asistent);
         System.out.println("L'assistent " + asistent.getNom() + " ha fet una reserva. Places disponibles: " + (aforament - asistents.size()));
-        notifyAll();  // Notifica a los asistentes esperando
+        notifyAll();
     }
 
     public synchronized void cancelaReserva(Assistent asistent) {
         if (asistents.remove(asistent)) {
             System.out.println("L'assistent " + asistent.getNom() + " ha cancel·lat la reserva. Places disponibles: " + (aforament - asistents.size()));
-            notifyAll();  // Notifica que hay una plaza libre
+            notifyAll();
         } else {
             System.out.println("L'assistent " + asistent.getNom() + " no ha pogut cancel·lar una reserva inexistent.");
         }
