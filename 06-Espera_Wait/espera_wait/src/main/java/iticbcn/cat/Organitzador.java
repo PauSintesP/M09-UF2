@@ -1,25 +1,12 @@
 package iticbcn.cat;
 
 public class Organitzador {
+    public static void main(String[] args) {
+        Esdeveniment esdeveniment = new Esdeveniment(5);
 
-    private String nom;
-
-    private Esdeveniment esdeveniment;
-
-    public void setEsdeveniment(Esdeveniment esdeveniment) {
-
-        this.esdeveniment = esdeveniment;
+        for (int i = 0; i < 10; i++) {
+            Assistent assistent = new Assistent(esdeveniment, "Assistent-" + i);
+            new Thread(assistent).start();
+        }
     }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-    public Esdeveniment getEsdeveniment() {
-        return esdeveniment;
-    }  
-    public String getNom() {
-        return nom;
-    } 
-
-    
 }

@@ -4,36 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Esdeveniment {
-
     private int aforament;
-
-    private List<Assistent> asistents = new ArrayList<Asistent>();
+    private List<Assistent> asistents = new ArrayList<>();
 
     public Esdeveniment(int aforament) {
-        if  (aforament > 10) {
-            throw new IllegalArgumentException("L'aforament no pot ser mes gran que 10");
+        if (aforament > 10) {
+            throw new IllegalArgumentException("L'aforament no pot ser més gran que 10");
         }
-        else{
-            this.aforament = aforament;
-        }
-
-        
+        this.aforament = aforament;
     }
-    
-    public void ferReserva(Assistent asistent) {
 
-        if (asistents.size() < ASISTENTS_MAXIMS) {
-            asistents.add(asistent);
-        } else {
-            throw new IllegalStateException("No queden places disponibles");
+    public synchronized void ferReserva(Assistent asistent) throws InterruptedException {
+        while (asistents.size() >= aforament) {
+            wait();  // Espera si no hay plazas disponibles
         }
+        asistents.add(asistent);
+        System.out.println("L'assistent " + asistent.getNom() + " ha fet una reserva. Places disponibles: " + (aforament - asistents.size()));
+        notifyAll();  // Notifica a los asistentes esperando
     }
-    
-    public void cancelaReserva(Assistent asistent) {
+
+    public synchronized void cancelaReserva(Assistent asistent) {
         if (asistents.remove(asistent)) {
-
+            System.out.println("L'assistent " + asistent.getNom() + " ha cancel·lat la reserva. Places disponibles: " + (aforament - asistents.size()));
+            notifyAll();  // Notifica que hay una plaza libre
         } else {
-            throw new IllegalArgumentException("L'assistent no està a la llista");
+            System.out.println("L'assistent " + asistent.getNom() + " no ha pogut cancel·lar una reserva inexistent.");
         }
     }
 }
