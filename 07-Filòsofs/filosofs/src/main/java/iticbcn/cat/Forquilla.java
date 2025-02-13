@@ -9,7 +9,7 @@ public class Forquilla {
         this.enUs = false;
     }
 
-    public synchronized boolean agafar() {
+    public boolean agafar() {
         if (!enUs) {
             enUs = true;
             return true;
@@ -17,7 +17,7 @@ public class Forquilla {
         return false;
     }
 
-    public synchronized void deixar() {
+    public void deixar() {
         enUs = false;
     }
 
