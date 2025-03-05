@@ -4,59 +4,105 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Estanc {
-    private final List<Tabac> tabacList = new ArrayList<>();
-    private final List<Paper> paperList = new ArrayList<>();
-    private final List<Llumi> llumiList = new ArrayList<>();
-    private boolean obert = true;
+public class Estanc extends Thread {
 
-    public synchronized void nouSubministrament() throws InterruptedException {
-        Random random = new Random();
-        while (obert) {
-            int tipus = random.nextInt(3);
-            switch (tipus) {
-                case 0 -> addTabac();
-                case 1 -> addPaper();
-                case 2 -> addLlumi();
-            }
-            notifyAll(); 
-            Thread.sleep(500 + random.nextInt(1000)); 
-        }
+  private static Random rnd = new Random();
+
+  private List<Tabac> tabacs;
+  private List<Llumi> llumins;
+  private List<Paper> papers;
+  private boolean obert = false;
+
+  public Estanc() {
+
+    tabacs = new ArrayList<>();
+
+    llumins = new ArrayList<>();
+
+    papers = new ArrayList<>();
+    
+  }
+
+  synchronized public void nouSubministrament() {
+
+    int valor = rnd.nextInt(3);
+
+    switch (valor) {
+
+      case 0 -> afegirTabac();
+      case 1 -> afegirLlumi();
+      case 2 -> afegirPaper();
     }
 
-    public synchronized void addTabac() {
-        tabacList.add(new Tabac());
-        System.out.println("Afegint tabac");
-    }
+    notifyAll();
 
-    public synchronized void addPaper() {
-        paperList.add(new Paper());
-        System.out.println("Afegint paper");
-    }
+  }
 
-    public synchronized void addLlumi() {
-        llumiList.add(new Llumi());
-        System.out.println("Afegint llumí");
-    }
+  public void afegirTabac() { 
 
-    public synchronized Tabac venTabac() throws InterruptedException {
-        while (tabacList.isEmpty()) wait();
-        return tabacList.remove(0);
-    }
+    System.out.println("Afegint Tabac");
 
-    public synchronized Paper venPaper() throws InterruptedException {
-        while (paperList.isEmpty()) wait();
-        return paperList.remove(0);
-    }
+    tabacs.add(new Tabac()); 
+  }
+  
+  public void afegirLlumi() { 
 
-    public synchronized Llumi venLlumi() throws InterruptedException {
-        while (llumiList.isEmpty()) wait();
-        return llumiList.remove(0);
-    }
+    System.out.println("Afegint Llumi");
 
-    public synchronized void tancarEstanc() {
+    llumins.add(new Llumi()); 
+  }
+  
+  public void afegirPaper() { 
+
+    System.out.println("Afegint Paper");
+
+    papers.add(new Paper()); 
+  }
+
+  public Tabac vendreTabac() { 
+
+    if (!tabacs.isEmpty()) {
+
+      return tabacs.remove(tabacs.size() - 1);
+    }
+    else return null;
+  }
+
+  public Llumi vendreLlumi() { 
+
+    if (!llumins.isEmpty()) return llumins.remove(llumins.size() - 1);
+    
+    else return null;
+  }
+
+  public Paper vendrePaper() { 
+
+    if (!papers.isEmpty()) return papers.remove(papers.size() - 1);
+
+    else return null;
+  }
+
+  @Override
+  public void run() {
+
+    obert = true;
+    System.out.println("Estanc obert");
+
+    while (obert) {
+      nouSubministrament();
+      
+      try {
+        Thread.sleep(rnd.nextInt(1000) + 500);
+      } catch (InterruptedException e) {
         obert = false;
-        notifyAll();
-        System.out.println("Estanc tancat");
+        Thread.currentThread().interrupt();
+      }
     }
+
+    System.out.println("Estanc Tancat");
+
+  }
+
+  public void tancarEstanc() { obert = false; }
+
 }

@@ -2,41 +2,79 @@ package itic.bcn;
 
 import java.util.Random;
 
-public class Fumador implements Runnable {
-    private final Estanc estanc;
-    private final int id;
-    private int fumades = 0;
+public class Fumador extends Thread {
+  private final Random random = new Random();
 
-    public Fumador(Estanc estanc, int id) {
-        this.estanc = estanc;
-        this.id = id;
+  private final Estanc estanc;
+  public final int id;
+  private Tabac tabac = null;
+  private Llumi llumi = null;
+  private Paper paper = null;
+  private int fumades = 0;
+
+  public Fumador(Estanc estanc, int id) {
+    this.estanc = estanc;
+    this.id = id;
+  }
+
+  public void fuma() throws InterruptedException {
+    if (tabac != null && llumi != null && paper != null) {
+      System.out.printf("Fumador %d fumant%n", id);
+      fumades++;
+      System.out.printf("Fumador %d ha fumat %d vegades%n", id, fumades);
+
+      tabac = null;
+      llumi = null;
+      paper = null;
+
+      Thread.sleep(random.nextInt(500) + 500);
+      
+    }
+  }
+
+  public void compraTabac() throws InterruptedException {
+    System.out.printf("Fumador %d comprant Tabac%n", id);
+    synchronized (estanc) {
+      while ((tabac = estanc.vendreTabac()) == null) {
+        estanc.wait();
+      }
+    }
+  }
+
+  public void compraPaper() throws InterruptedException {
+    System.out.printf("Fumador %d comprant Paper%n", id);
+    synchronized (estanc) {
+      while((paper = estanc.vendrePaper()) == null) {
+        estanc.wait();
+      }
+    }
+  }
+
+  public void compraLlumi() throws InterruptedException {
+    System.out.printf("Fumador %d comprant Llumi%n", id);
+    synchronized (estanc) {
+      while((llumi = estanc.vendreLlumi()) == null) {
+        estanc.wait();
+      }
+    }
+  }
+
+  @Override
+  
+  public void run() {
+
+    try {
+      while (fumades < 3) {
+        compraTabac();
+        compraPaper();
+        compraLlumi();
+        fuma();
+      }
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      System.out.printf("Fumador %d ha estat interromput%n", id);
     }
 
-    private void fuma() throws InterruptedException {
-        System.out.println("Fumador " + id + " fumant");
-        Thread.sleep(500 + new Random().nextInt(500));
-        fumades++;
-        System.out.println("Fumador " + id + " ha fumat " + fumades + " vegades");
-    }
-
-    private void compra() throws InterruptedException {
-        System.out.println("Fumador " + id + " comprant Tabac");
-        estanc.venTabac();
-        System.out.println("Fumador " + id + " comprant Paper");
-        estanc.venPaper();
-        System.out.println("Fumador " + id + " comprant Llumí");
-        estanc.venLlumi();
-    }
-
-    @Override
-    public void run() {
-        try {
-            while (fumades < 3) {
-                compra();
-                fuma();
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
+  }
+  
 }
